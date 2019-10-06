@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "461229993775",
+    "firebase_url": "https://behave-b731a.firebaseio.com",
+    "project_id": "behave-b731a",
+    "storage_bucket": "behave-b731a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461229993775:android:ab94ef96dc63d19674fbda",
+        "android_client_info": {
+          "package_name": "com.hulia.behave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461229993775-qnu4tir1jdipuj0dmhc4ep6r6pmohb67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvruJk9NCmLU9WdPO5tstqZQwpJ6eSwA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461229993775-qnu4tir1jdipuj0dmhc4ep6r6pmohb67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
