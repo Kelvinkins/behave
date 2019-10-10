@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:behave/Constants/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
   @override
@@ -21,9 +23,24 @@ class SplashScreenState extends State<AnimatedSplashScreen>
     return new Timer(_duration, navigationPage);
   }
 
-  void navigationPage() {
+  void navigationPage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+       print(seen);
+
+   
+      seen = (prefs.getBool('seen'));
+      if(seen ==null)
+      {
+        seen=false;
+      }
+    print(seen);
     if (seen) {
-      Navigator.of(context).pushReplacementNamed(MAIN_UI);
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      if (user != null) {
+        Navigator.of(context).pushReplacementNamed(MAIN_UI);
+      } else {
+        Navigator.of(context).pushReplacementNamed(LOGIN_UI);
+      }
     } else {
       Navigator.of(context).pushReplacementNamed(ONBOARDING_UI);
     }

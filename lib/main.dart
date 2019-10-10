@@ -6,6 +6,7 @@ import 'UI/Widgets/onboardingScreen.dart';
 import 'UI/Widgets/splashScreen.dart';
 import 'UI/login_ui.dart';
 import 'UI/main_ui.dart';
+import 'UI/rating_ui.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         ONBOARDING_UI: (BuildContext context) => OnboardingUI(),
         SPLASH_SCREEN: (BuildContext context) => AnimatedSplashScreen(),
         LOGIN_UI: (BuildContext context) => LoginUI(),
+        RATING_UI: (BuildContext context) => RatingUI(),
 
       },
       initialRoute: SPLASH_SCREEN,

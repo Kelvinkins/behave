@@ -55,11 +55,12 @@ class AuthService {
   }
 
   Future<String> collectPhoneNumber(
-      FirebaseUser user, String phoneNumber) async {
+      FirebaseUser user, String phoneNumber, String gender) async {
     String message = "";
     try {
       Firestore.instance.document('users/' + user.uid).updateData({
         'phoneNumber': phoneNumber,
+        'gender': gender,
       });
       message = "Thanks for the update!";
     } on PlatformException catch (error) {
@@ -165,8 +166,8 @@ class AuthService {
   void updateUserData(
       FirebaseUser user, String phoneNumber, String gender) async {
     DocumentReference ref = _db.collection('users').document(user.uid);
-
-    return ref.setData({
+    loading.add(true);
+    ref.setData({
       'uid': user.uid,
       'email': user.email,
       'displayName': user.displayName,
@@ -174,6 +175,31 @@ class AuthService {
       'gender': gender,
       'phoneNumber': phoneNumber
     }, merge: true);
+    loading.add(false);
+  }
+
+  void rate(FirebaseUser user, String phoneNumber, String trait, double rating,
+      String comment, String ratingId, String traitCategory) async {
+    DocumentReference ref = _db
+        .collection("ratings")
+        .document(phoneNumber)
+        .collection("myratings")
+        .document(ratingId);
+    loading.add(true);
+    try {
+      ref.setData({
+        'ratedByUid': user.uid,
+        'rateBydisplayName': user.displayName,
+        'ratedOn': DateTime.now(),
+        'trait': trait,
+        'rating': rating,
+        'comment': comment,
+        'category': traitCategory
+      }, merge: true);
+      loading.add(false);
+    } on PlatformException catch (ex) {
+      loading.add(false);
+    }
   }
 
   void saveDeviceToken() async {
@@ -284,6 +310,25 @@ class AuthService {
       return result;
     } on PlatformException catch (ex) {
       return false;
+    }
+  }
+
+  Future<bool> isSelfRating(String phoneNumber, FirebaseUser user) async {
+    bool result = false;
+    try {
+      final DocumentReference docRef =
+          Firestore.instance.document('users/' + user.uid);
+      DocumentSnapshot userDs = await docRef.get();
+      if (userDs.exists) {
+        if (phoneNumber == userDs.data["phoneNumber"].toString()) {
+          result = true;
+        } else {
+          result = false;
+        }
+      }
+      return result;
+    } on PlatformException catch (err) {
+      return true;
     }
   }
 

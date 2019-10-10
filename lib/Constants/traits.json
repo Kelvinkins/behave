@@ -1,0 +1,55 @@
+{
+    "positive": [
+        {
+            "Name": "Accessible"
+        },
+        {
+            "Name": "Active"
+        },
+        {
+            "Name": "Adaptable"
+        },
+        {
+            "Name": "Admirable"
+        },
+        {
+            "Name": "Adventurous"
+        }
+    ],
+
+    "negative": [
+        {
+            "Name": "Nccessible"
+        },
+        {
+            "Name": "Nctive"
+        },
+        {
+            "Name": "Ndaptable"
+        },
+        {
+            "Name": "Ndmirable"
+        },
+        {
+            "Name": "Ndventurous"
+        }
+    ],
+    "neutral": [
+        {
+            "Name": "Tccessible"
+        },
+        {
+            "Name": "Tctive"
+        },
+        {
+            "Name": "Ndaptable"
+        },
+        {
+            "Name": "Tdmirable"
+        },
+        {
+            "Name": "Tdventurous"
+        }
+    ]
+    
+}

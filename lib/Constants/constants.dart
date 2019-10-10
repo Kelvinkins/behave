@@ -8,3 +8,4 @@ final String LOGIN_UI = "login_ui";
 final String REGISTRATION_UI = "registration_ui";
 final String FORGOT_PASSWORD_UI = "forgot_password_ui";
 final String REGISTRATIONSUCCESS_UI = "registrationSuccess_ui";
+final String RATING_UI="rating_ui";

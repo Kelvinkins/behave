@@ -1,17 +1,30 @@
 import 'package:behave/Constants/constants.dart';
 import 'package:fancy_on_boarding/fancy_on_boarding.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingUI extends StatefulWidget {
-
-
   @override
   _OnboardingUIState createState() => _OnboardingUIState();
 }
 
 class _OnboardingUIState extends State<OnboardingUI> {
 
-final pageList = [
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setSeen();
+
+  }
+
+  void setSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('seen', true);
+  }
+
+  final pageList = [
     PageModel(
         color: Colors.deepOrange,
         heroAssetPath: 'assets/style1.png',
@@ -21,7 +34,8 @@ final pageList = [
               color: Colors.white,
               fontSize: 34.0,
             )),
-        body: Text('Get ratings about your personality traits from those who know you well.',
+        body: Text(
+            'Get ratings about your personality traits from those who know you well.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -54,7 +68,8 @@ final pageList = [
             color: Colors.white,
             fontSize: 34.0,
           )),
-      body: Text('Then, help other people to become better too by rating them. Now hit the Get started button. Ohh Yeah!',
+      body: Text(
+          'Then, help other people to become better too by rating them. Now hit the Get started button. Ohh Yeah!',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -62,7 +77,7 @@ final pageList = [
           )),
       iconAssetPath: 'assets/style3.png',
     ),
-];
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -73,16 +88,14 @@ final pageList = [
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-    
       body: FancyOnBoarding(
-        doneButtonText: "Get Started",
-        skipButtonText: "Skip",
-        pageList: pageList,
-        onDoneButtonPressed: () =>
-    Navigator.of(context).pushReplacementNamed(LOGIN_UI),
-        onSkipButtonPressed: () =>
-    Navigator.of(context).pushReplacementNamed(MAIN_UI)
-      ),
+          doneButtonText: "Get Started",
+          skipButtonText: "Skip",
+          pageList: pageList,
+          onDoneButtonPressed: () =>
+              Navigator.of(context).pushReplacementNamed(LOGIN_UI),
+          onSkipButtonPressed: () =>
+              Navigator.of(context).pushReplacementNamed(LOGIN_UI)),
     );
   }
 }
