@@ -332,6 +332,32 @@ class AuthService {
     }
   }
 
+  Future<bool> isDuplicateRating(
+      String phoneNumber, FirebaseUser user, String traitCategory) async {
+    bool result = false;
+    try {
+      // final DocumentReference docRef =
+      //     Firestore.instance.document('users/' + user.uid);
+      CollectionReference ref = Firestore.instance
+          .collection("ratings")
+          .document(phoneNumber)
+          .collection("myratings")
+          .where("ratedByUid", isEqualTo: user.uid)
+          .where("category", isEqualTo: traitCategory);
+      // DocumentSnapshot userDs = await ref.;
+      QuerySnapshot qs = await ref.getDocuments();
+      if (qs.documents.isNotEmpty) {
+        result = true;
+      } else {
+        result = false;
+      }
+
+      return result;
+    } on PlatformException catch (err) {
+      return true;
+    }
+  }
+
   Future<bool> addToTrustCircle(String userId, String displayName) async {
     bool result = false;
     try {

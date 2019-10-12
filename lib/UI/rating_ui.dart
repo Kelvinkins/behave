@@ -15,7 +15,7 @@ class RatingUI extends StatefulWidget {
 class _RatingUIState extends State<RatingUI> {
   var _phoneNumberController = TextEditingController();
   var _commentController = TextEditingController();
-  double _rating=1.0;
+  double _rating = 1.0;
   double _userRating = 3.0;
   int _ratingBarMode = 1;
   bool _isRTLMode = false;
@@ -104,7 +104,6 @@ class _RatingUIState extends State<RatingUI> {
             onPressed: () async {
               _selectedIcon = await showDialog<IconData>(
                 context: context,
-                
                 builder: (context) => IconAlert(),
               );
               _ratingBarMode = 1;
@@ -273,8 +272,12 @@ class _RatingUIState extends State<RatingUI> {
                       color: Colors.red,
                       height: 50,
                       onPressed: () async {
+                        print("Heelllo ");
+
                         if (_phoneNumberController.text == "" ||
-                            _phoneNumberController.text == null) {
+                            _phoneNumberController.text == null ||
+                            _phoneNumberController.text.contains("+") ||
+                            _phoneNumberController.text.contains(" ")) {
                           messageDialogBox(
                               context,
                               "Input Error",
@@ -291,14 +294,33 @@ class _RatingUIState extends State<RatingUI> {
                           messageDialogBox(context, "Input Error",
                               "You must select your rating", "OK");
                         } else {
+
                           FirebaseUser user =
                               await FirebaseAuth.instance.currentUser();
+                          print("Heelllo "+user.uid);
+
+                          // bool duplicateResult =
+                          //     await authService.isDuplicateRating(
+                          //         _phoneNumberController.text,
+                          //         user,
+                          //         traitCategory);
+                          // print("Heelllo " + duplicateResult.toString()+" "+_phoneNumberController.text;
+
                           bool result = await authService.isSelfRating(
                               _phoneNumberController.text, user);
                           if (result) {
-                             messageDialogBox(context, "Self rating not allowed",
-                              "Sorry, you cannot rate yourself.", "OK");
-                          } else {
+                            messageDialogBox(context, "Self rating not allowed",
+                                "Sorry, you cannot rate yourself.", "OK");
+                          }
+                          //  else if (duplicateResult) {
+                          //   messageDialogBox(
+                          //       context,
+                          //       "Duplicate rating not allowed",
+                          //       "Sorry, you are not allowed to rate same trait of the same person more than once.",
+                          //       "OK");
+                          // } 
+                          else {
+                            // print(duplicateResult.toString());
                             var uuid = new Uuid();
                             var ratingId = uuid.v4();
                             authService.rate(

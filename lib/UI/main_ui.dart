@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:behave/Constants/constants.dart';
 import 'package:behave/firebase/auth.dart';
@@ -31,6 +33,8 @@ class _MainUIState extends State<MainUI> {
   final TextEditingController txtPhoneNumberController =
       new TextEditingController();
   String dropDownValue;
+  double positive = 0;
+  bool isRefreshing = false;
 
   bool toggle = false;
   List<Color> colorList = [
@@ -50,7 +54,7 @@ class _MainUIState extends State<MainUI> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    refresh(5, 10, 6);
+    startTime();
     FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
       authService.userHasPhoneNumber(user).then((bool value) {
         if (!value) {
@@ -62,6 +66,19 @@ class _MainUIState extends State<MainUI> {
         }
       });
     });
+  }
+
+  Future startTime() async {
+    var _duration = new Duration(seconds: 1);
+    return new Timer(_duration, changeRefreshStatus);
+  }
+
+  void changeRefreshStatus() {
+    if (isRefreshing) {
+      isRefreshing = false;
+    } else {
+      isRefreshing = true;
+    }
   }
 
   void phoneNumberRequestDialog(
@@ -177,6 +194,38 @@ class _MainUIState extends State<MainUI> {
     );
   }
 
+  void messageDialogBox(BuildContext context, String title, String message,
+      String buttonLabel, String secondButtonLabel) {
+    // flutter defined function
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text(title),
+          content: new Text(message),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text(buttonLabel),
+              onPressed: () async {
+                authService.signOut();
+                Navigator.of(context).pushReplacementNamed(LOGIN_UI);
+              },
+            ),
+            new FlatButton(
+              child: new Text(secondButtonLabel),
+              onPressed: () async {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -189,6 +238,16 @@ class _MainUIState extends State<MainUI> {
       appBar: AppBar(
         title: Text("Behave"),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            color: Colors.white,
+            onPressed: () async {
+              messageDialogBox(context, "Sign out",
+                  "Are you sure you want to sign out?", "Yes", "No");
+            },
+          ),
+        ],
       ),
 
       // appBar: AppBar(
@@ -220,195 +279,234 @@ class _MainUIState extends State<MainUI> {
                                             .toString())
                                         .collection("myratings")
                                         .snapshots(),
-                                    builder: (context, sSnanshot) {
-                                      if(sSnanshot.hasData)
-                                      {
-                                      if (sSnanshot.data.documents==null) {
-                                        return ListView(
-                                          children: <Widget>[
-                                            Card(
-                                                elevation: 8.0,
-                                                margin:
-                                                    new EdgeInsets.symmetric(
-                                                        horizontal: 10.0,
-                                                        vertical: 6.0),
-                                                child: Container(
-                                                  // decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-                                                  child: ListTile(
-                                                      onTap: () {},
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 20.0,
-                                                              vertical: 10.0),
-                                                      leading: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 12.0),
-                                                        decoration:
-                                                            new BoxDecoration(
-                                                                border:
-                                                                    new Border(
-                                                                        right:
-                                                                            new BorderSide(
-                                                          width: 1.0,
-                                                        ))),
-                                                        child: Icon(
-                                                          Icons.thumb_up,
-                                                          color: Colors.green,
-                                                          size: 30,
+                                    builder: (context, sSnapshot) {
+                                      if (sSnapshot.hasData) {
+                                        if (sSnapshot.data.documents != null) {
+                                          sSnapshot.data.documents
+                                              .forEach((doc) {
+                                            positive = 0;
+                                            positive =
+                                                positive + doc.data["rating"];
+                                            refresh(10, 6, 5);
+                                            print(positive);
+                                          });
+
+                                          startTime().then((void v) {
+                                            isRefreshing = true;
+                                          });
+                                          // isRefreshing=true;
+                                          // print(sSnapshot.data.documents[0].data["rating"]);
+                                          return ListView(
+                                            children: <Widget>[
+                                              Card(
+                                                  elevation: 8.0,
+                                                  margin:
+                                                      new EdgeInsets.symmetric(
+                                                          horizontal: 10.0,
+                                                          vertical: 6.0),
+                                                  child: Container(
+                                                    // decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                                                    child: ListTile(
+                                                        onTap: () {},
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        20.0,
+                                                                    vertical:
+                                                                        10.0),
+                                                        leading: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 12.0),
+                                                          decoration:
+                                                              new BoxDecoration(
+                                                                  border:
+                                                                      new Border(
+                                                                          right:
+                                                                              new BorderSide(
+                                                            width: 1.0,
+                                                          ))),
+                                                          child: Icon(
+                                                            Icons.thumb_up,
+                                                            color: Colors.green,
+                                                            size: 30,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      title: Text(
-                                                        "Attractive",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.green),
-                                                      ),
-                                                      subtitle: Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                              Icons
-                                                                  .linear_scale,
-                                                              color: Colors
-                                                                  .green[300]),
-                                                          Text("Your good side")
-                                                        ],
-                                                      ),
-                                                      trailing: Icon(
-                                                          Icons
-                                                              .keyboard_arrow_right,
-                                                          size: 30.0)),
-                                                )),
-                                            Divider(
-                                              height: 5,
-                                            ),
-                                            ListTile(
-                                              leading: Icon(
-                                                Icons.sentiment_very_satisfied,
-                                                color: Colors.green,
-                                                size: 40,
+                                                        title: Text(
+                                                          "Attractive",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.green),
+                                                        ),
+                                                        subtitle: Row(
+                                                          children: <Widget>[
+                                                            Icon(
+                                                                Icons
+                                                                    .linear_scale,
+                                                                color: Colors
+                                                                        .green[
+                                                                    300]),
+                                                            Text(
+                                                                "Your good side")
+                                                          ],
+                                                        ),
+                                                        trailing: Icon(
+                                                            Icons
+                                                                .keyboard_arrow_right,
+                                                            size: 30.0)),
+                                                  )),
+                                              Divider(
+                                                height: 5,
                                               ),
-                                              title: Text(
-                                                "90%",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.green,
-                                                    fontSize: 20),
-                                              ),
-                                              subtitle: Text("Positive traits"),
-                                            ),
-                                            ListTile(
-                                              leading: Icon(
-                                                  Icons.sentiment_neutral,
-                                                  color: Colors.orange,
-                                                  size: 40),
-                                              title: Text(
-                                                "90%",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.orange,
-                                                    fontSize: 20),
-                                              ),
-                                              subtitle: Text("Neutral traits"),
-                                            ),
-                                            ListTile(
-                                              leading: Icon(
+                                              ListTile(
+                                                leading: Icon(
                                                   Icons
-                                                      .sentiment_very_dissatisfied,
-                                                  color: Colors.red,
-                                                  size: 40),
-                                              title: Text(
-                                                "45%",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.red,
-                                                    fontSize: 20),
+                                                      .sentiment_very_satisfied,
+                                                  color: Colors.green,
+                                                  size: 40,
+                                                ),
+                                                title: Text(
+                                                  positive.toString(),
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green,
+                                                      fontSize: 20),
+                                                ),
+                                                subtitle:
+                                                    Text("Positive traits"),
                                               ),
-                                              subtitle: Text("Negative traits"),
-                                            ), // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-                                            Card(
-                                                elevation: 8.0,
-                                                margin:
-                                                    new EdgeInsets.symmetric(
-                                                        horizontal: 10.0,
-                                                        vertical: 6.0),
-                                                child: Container(
-                                                  // decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-                                                  child: ListTile(
-                                                      onTap: () {},
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 20.0,
-                                                              vertical: 10.0),
-                                                      leading: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 12.0),
-                                                        decoration:
-                                                            new BoxDecoration(
-                                                                border:
-                                                                    new Border(
-                                                                        right:
-                                                                            new BorderSide(
-                                                          width: 1.0,
-                                                        ))),
-                                                        child: Icon(
-                                                          Icons.details,
-                                                          color: Colors.red,
-                                                          size: 30,
+                                              ListTile(
+                                                leading: Icon(
+                                                    Icons.sentiment_neutral,
+                                                    color: Colors.orange,
+                                                    size: 40),
+                                                title: Text(
+                                                  "90%",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.orange,
+                                                      fontSize: 20),
+                                                ),
+                                                subtitle:
+                                                    Text("Neutral traits"),
+                                              ),
+                                              ListTile(
+                                                leading: Icon(
+                                                    Icons
+                                                        .sentiment_very_dissatisfied,
+                                                    color: Colors.red,
+                                                    size: 40),
+                                                title: Text(
+                                                  "45%",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.red,
+                                                      fontSize: 20),
+                                                ),
+                                                subtitle:
+                                                    Text("Negative traits"),
+                                              ), // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+                                              Card(
+                                                  elevation: 8.0,
+                                                  margin:
+                                                      new EdgeInsets.symmetric(
+                                                          horizontal: 10.0,
+                                                          vertical: 6.0),
+                                                  child: Container(
+                                                    // decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                                                    child: ListTile(
+                                                        onTap: () {},
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        20.0,
+                                                                    vertical:
+                                                                        10.0),
+                                                        leading: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 12.0),
+                                                          decoration:
+                                                              new BoxDecoration(
+                                                                  border:
+                                                                      new Border(
+                                                                          right:
+                                                                              new BorderSide(
+                                                            width: 1.0,
+                                                          ))),
+                                                          child: Icon(
+                                                            Icons.details,
+                                                            color: Colors.red,
+                                                            size: 30,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      title: Text("Details"),
-                                                      subtitle: Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                              Icons
-                                                                  .linear_scale,
-                                                              color: Colors
-                                                                  .green[300]),
-                                                          Text(
-                                                              " View details of your ratings")
-                                                        ],
-                                                      ),
-                                                      trailing: Icon(
-                                                          Icons
-                                                              .keyboard_arrow_right,
-                                                          size: 30.0)),
-                                                )),
-                                            PieChart(
-                                              dataMap: dataMap,
-                                              legendFontColor:
-                                                  Colors.blueGrey[900],
-                                              legendFontSize: 14.0,
-                                              legendFontWeight: FontWeight.w500,
-                                              animationDuration:
-                                                  Duration(milliseconds: 800),
-                                              chartLegendSpacing: 32.0,
-                                              chartRadius:
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      2.7,
-                                              showChartValuesInPercentage: true,
-                                              showChartValues: true,
-                                              showChartValuesOutside: false,
-                                              chartValuesColor:
-                                                  Colors.white.withOpacity(0.9),
-                                              colorList: colorList,
-                                              showLegends: true,
-                                              decimalPlaces: 1,
-                                            )
-                                          ],
-                                        );
+                                                        title: Text("Details"),
+                                                        subtitle: Row(
+                                                          children: <Widget>[
+                                                            Icon(
+                                                                Icons
+                                                                    .linear_scale,
+                                                                color: Colors
+                                                                        .green[
+                                                                    300]),
+                                                            Text(
+                                                                " View details of your ratings")
+                                                          ],
+                                                        ),
+                                                        trailing: Icon(
+                                                            Icons
+                                                                .keyboard_arrow_right,
+                                                            size: 30.0)),
+                                                  )),
+                                              isRefreshing
+                                                  ? PieChart(
+                                                      dataMap: dataMap,
+                                                      legendFontColor:
+                                                          Colors.blueGrey[900],
+                                                      legendFontSize: 14.0,
+                                                      legendFontWeight:
+                                                          FontWeight.w500,
+                                                      animationDuration:
+                                                          Duration(
+                                                              milliseconds:
+                                                                  800),
+                                                      chartLegendSpacing: 32.0,
+                                                      chartRadius:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2.7,
+                                                      showChartValuesInPercentage:
+                                                          true,
+                                                      showChartValues: true,
+                                                      showChartValuesOutside:
+                                                          false,
+                                                      chartValuesColor: Colors
+                                                          .white
+                                                          .withOpacity(0.9),
+                                                      colorList: colorList,
+                                                      showLegends: true,
+                                                      decimalPlaces: 1,
+                                                    )
+                                                  : Center(
+                                                      child: Text("loading..."),
+                                                    )
+                                            ],
+                                          );
+                                        } else {
+                                          return Center(
+                                              child: Text(
+                                                  "No data at this time.",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)));
+                                        }
                                       } else {
                                         return Center(
-                                            child: Text("No data at this time.",
-                                                style: TextStyle(
-                                                    color: Colors.grey)));
-                                      }
-                                      }
-                                      else{
-                                          return Center(
                                             child: Text("Please wait...",
                                                 style: TextStyle(
                                                     color: Colors.grey)));
