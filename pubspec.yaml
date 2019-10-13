@@ -1,5 +1,5 @@
 name: behave
-description: A new Flutter project.
+description: A trait rating app.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -38,6 +38,7 @@ dependencies:
   uuid: ^2.0.2
   shared_preferences: ^0.5.3+4
   native_contact_picker: ^0.0.6
+  flutter_svg: ^0.14.2
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +63,10 @@ flutter:
    - assets/style3.png
    - assets/background.png
    - assets/dora.gif
+   - assets/logo.png
+   - assets/style3.svg
+   - assets/icon.png
+
 
 
 

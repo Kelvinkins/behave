@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,14 +26,12 @@ class SplashScreenState extends State<AnimatedSplashScreen>
 
   void navigationPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-       print(seen);
+    print(seen);
 
-   
-      seen = (prefs.getBool('seen'));
-      if(seen ==null)
-      {
-        seen=false;
-      }
+    seen = (prefs.getBool('seen'));
+    if (seen == null) {
+      seen = false;
+    }
     print(seen);
     if (seen) {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -81,24 +80,55 @@ class SplashScreenState extends State<AnimatedSplashScreen>
                   ))
             ],
           ),
-          new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "Behave",
-                style: TextStyle(
-                    color: Colors.red,
-                    fontFamily: 'Quicksand',
-                    fontWeight: FontWeight.bold,
-                    fontSize: animation.value * 30),
+
+          AvatarGlow(
+            startDelay: Duration(milliseconds: 1000),
+            glowColor: Colors.red,
+            endRadius: 150.0,
+            duration: Duration(milliseconds: 3000),
+            repeat: true,
+            showTwoGlows: true,
+            repeatPauseDuration: Duration(microseconds: 100),
+            child: Material(
+              elevation: 8.0,
+              shape: CircleBorder(),
+              child: new Image.asset(
+                'assets/logo.png',
+                width: animation.value * 150,
+                height: animation.value * 150,
               ),
-              Text(
-                "You can be better...",
-                style:
-                    TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
-              )
-            ],
+            ),
           ),
+
+          // new Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: <Widget>[
+          //       new Image.asset(
+          //         'assets/logo.png',
+          //         width: animation.value * 250,
+          //         height: animation.value * 250,
+          //       ),
+          //     ],
+          //   ),
+
+          // new Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: <Widget>[
+          //     Text(
+          //       "Behave",
+          //       style: TextStyle(
+          //           color: Colors.red,
+          //           fontFamily: 'Quicksand',
+          //           fontWeight: FontWeight.bold,
+          //           fontSize: animation.value * 30),
+          //     ),
+          //     Text(
+          //       "You can be better...",
+          //       style:
+          //           TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+          //     )
+          //   ],
+          // ),
         ],
       ),
     );

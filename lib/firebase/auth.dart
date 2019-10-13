@@ -338,7 +338,7 @@ class AuthService {
     try {
       // final DocumentReference docRef =
       //     Firestore.instance.document('users/' + user.uid);
-      CollectionReference ref = Firestore.instance
+      Query ref = Firestore.instance
           .collection("ratings")
           .document(phoneNumber)
           .collection("myratings")
@@ -346,12 +346,11 @@ class AuthService {
           .where("category", isEqualTo: traitCategory);
       // DocumentSnapshot userDs = await ref.;
       QuerySnapshot qs = await ref.getDocuments();
-      if (qs.documents.isNotEmpty) {
+      if (qs.documents.length > 0) {
         result = true;
       } else {
         result = false;
       }
-
       return result;
     } on PlatformException catch (err) {
       return true;

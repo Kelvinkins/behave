@@ -8,20 +8,18 @@ class Login extends StatefulWidget {
   _LoginState createState() => new _LoginState();
 }
 
-
-
 class _LoginState extends State<Login> {
-    bool _loading = false;
+  bool _loading = false;
 
   @override
   void initState() {
-   
     authService.loading.listen((state) {
       if (mounted) {
         setState(() => _loading = state);
       }
-      });
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,55 +31,64 @@ class _LoginState extends State<Login> {
         _loading
             ? new Center(
                 child: CircularProgressIndicator(),
-              ):
-        Column(
-          children: <Widget>[
-            RaisedButton(
-                child: roundedRectButton("Google", signUpGradients, false),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100)),
-                color: Colors.red,
-                onPressed: () async {
-                  FirebaseUser user = await authService.googleSignIn();
+              )
+            : Column(
+                children: <Widget>[
+                  RaisedButton(
+                      child:
+                          roundedRectButton("Google", signUpGradients, false),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100)),
+                      color: Colors.red,
+                      onPressed: () async {
+                        FirebaseUser user = await authService.googleSignIn();
 
-                  if (user != null) {
-                    authService.analytics.logLogin(loginMethod: "googleLogin");
-                    //  Navigator.push(context, new MaterialPageRoute(builder: (context)=>new HomeView(title: "hulia", user: user)));
-                    // Navigator.of(context)
-                    //     .pushReplacementNamed(
-                    //         '/home');
-                    Navigator.of(context).pushReplacementNamed(MAIN_UI);
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("Error signing in with google"),
-                            content: Text("Sorry, Something went wrong."),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text("OK"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
-                }),
-            Divider(height: 5),
-            // roundedRectButton("Google", signUpGradients, false),
+                        if (user != null) {
+                          authService.analytics
+                              .logLogin(loginMethod: "googleLogin");
+                          //  Navigator.push(context, new MaterialPageRoute(builder: (context)=>new HomeView(title: "hulia", user: user)));
+                          // Navigator.of(context)
+                          //     .pushReplacementNamed(
+                          //         '/home');
+                          Navigator.of(context).pop();
 
-            RaisedButton(
-              child: roundedRectButton("Facebook", signInGradients, false),
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100)),
-              onPressed: () {},
-            )
-          ],
-        )
+                          Navigator.of(context).pushReplacementNamed(MAIN_UI);
+                          // .pushReplacementNamed(MAIN_UI);
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Error signing in with google"),
+                                  content: Text("Sorry, Something went wrong."),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text("OK"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                      }),
+                  Divider(
+                    height: 5,
+                    color: Colors.white,
+                  ),
+                  // roundedRectButton("Google", signUpGradients, false),
+
+                  RaisedButton(
+                    child:
+                        roundedRectButton("Facebook", signInGradients, false),
+                    color: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100)),
+                    onPressed: () {},
+                  )
+                ],
+              )
       ],
     );
   }

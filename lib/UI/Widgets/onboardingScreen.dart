@@ -61,7 +61,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
         iconAssetPath: 'assets/style2.png'),
     PageModel(
       color: Colors.red,
-      heroAssetPath: 'assets/style3.png',
+      heroAssetPath: 'assets/style3.svg',
       title: Text('Sounds like fun?',
           style: TextStyle(
             fontWeight: FontWeight.w800,
@@ -69,13 +69,14 @@ class _OnboardingUIState extends State<OnboardingUI> {
             fontSize: 34.0,
           )),
       body: Text(
-          'Then, help other people to become better too by rating them. Now hit the Get started button. Ohh Yeah!',
+          'Then, help other people become better too by rating them. Now hit the Get started button. Ohh Yeah!',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.0,
           )),
-      iconAssetPath: 'assets/style3.png',
+      iconAssetPath: 'assets/style3.svg',
+    
     ),
   ];
 

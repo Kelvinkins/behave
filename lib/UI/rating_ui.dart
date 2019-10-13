@@ -75,7 +75,7 @@ class _RatingUIState extends State<RatingUI> {
     showDialog(
         context: context,
         builder: (_) => AssetGiffyDialog(
-              image: Image.asset('assets/dora.gif'),
+              image: Image.asset('assets/style1.png'),
               title: Text(
                 'Rating submitted successfully',
                 style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
@@ -96,7 +96,7 @@ class _RatingUIState extends State<RatingUI> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('behave New Rating'),
+        title: Text('New Rating'),
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
@@ -299,11 +299,11 @@ class _RatingUIState extends State<RatingUI> {
                               await FirebaseAuth.instance.currentUser();
                           print("Heelllo "+user.uid);
 
-                          // bool duplicateResult =
-                          //     await authService.isDuplicateRating(
-                          //         _phoneNumberController.text,
-                          //         user,
-                          //         traitCategory);
+                          bool duplicateResult =
+                              await authService.isDuplicateRating(
+                                  _phoneNumberController.text,
+                                  user,
+                                  traitCategory);
                           // print("Heelllo " + duplicateResult.toString()+" "+_phoneNumberController.text;
 
                           bool result = await authService.isSelfRating(
@@ -312,13 +312,13 @@ class _RatingUIState extends State<RatingUI> {
                             messageDialogBox(context, "Self rating not allowed",
                                 "Sorry, you cannot rate yourself.", "OK");
                           }
-                          //  else if (duplicateResult) {
-                          //   messageDialogBox(
-                          //       context,
-                          //       "Duplicate rating not allowed",
-                          //       "Sorry, you are not allowed to rate same trait of the same person more than once.",
-                          //       "OK");
-                          // } 
+                           else if (duplicateResult) {
+                            messageDialogBox(
+                                context,
+                                "Duplicate rating not allowed",
+                                "Sorry, you are not allowed to rate same trait of the same person more than once.",
+                                "OK");
+                          } 
                           else {
                             // print(duplicateResult.toString());
                             var uuid = new Uuid();
