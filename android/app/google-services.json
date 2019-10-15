@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "461229993775-0kiatn9uc3tpbfrf9nvka86fmagpikn9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hulia.behave",
+            "certificate_hash": "3856d96791d8a9cf1ad6e035146b3a4b255b407d"
+          }
+        },
+        {
+          "client_id": "461229993775-k69hvg8mot1s79s7ha9eg1p69rm0ep7j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hulia.behave",
+            "certificate_hash": "457db419c4f9ecb1ee626c97dfeaaaf9b45484fa"
+          }
+        },
+        {
           "client_id": "461229993775-qnu4tir1jdipuj0dmhc4ep6r6pmohb67.apps.googleusercontent.com",
           "client_type": 3
         }

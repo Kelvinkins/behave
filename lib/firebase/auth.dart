@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -23,6 +24,7 @@ class AuthService {
   Observable<Map<String, dynamic>> profile; // custom user data in Firestore
   PublishSubject loading = PublishSubject();
   final analytics = new FirebaseAnalytics();
+  FacebookLogin fbLogin = new FacebookLogin();
 
   // constructor
   // AuthService() {
@@ -159,6 +161,41 @@ class AuthService {
     } on PlatformException catch (e) {
       loading.add(false);
       user = null;
+    }
+    return authResult.user;
+  }
+
+  Future<FirebaseUser> fbookLogin() async {
+    AuthResult authResult;
+    // fbLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+    // if you remove above comment then facebook login will take username and pasword for login in Webview
+    try {
+      final FacebookLoginResult facebookLoginResult =
+          await fbLogin.logIn(['email', 'public_profile']);
+          print(facebookLoginResult.errorMessage);
+      if (facebookLoginResult.status == FacebookLoginStatus.loggedIn) {
+        FacebookAccessToken facebookAccessToken =
+            facebookLoginResult.accessToken;
+        final AuthCredential credential = FacebookAuthProvider.getCredential(
+            accessToken: facebookAccessToken.token);
+        print("Access Token:"+facebookAccessToken.token);
+
+        authResult = await _auth.signInWithCredential(credential);
+        if (authResult.additionalUserInfo.isNewUser) {
+          UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
+          userUpdateInfo.displayName = authResult.user.displayName;
+          userUpdateInfo.photoUrl = authResult.user.photoUrl;
+          await authResult.user.updateProfile(userUpdateInfo);
+          // Step 3
+          updateUserData(authResult.user, null, null);
+          saveDeviceToken();
+        }
+      }
+    } catch (e) {
+      print(e);
+
+      return authResult.user;
+
     }
     return authResult.user;
   }
@@ -333,7 +370,7 @@ class AuthService {
   }
 
   Future<bool> isDuplicateRating(
-      String phoneNumber, FirebaseUser user, String traitCategory) async {
+      String phoneNumber, FirebaseUser user, String trait) async {
     bool result = false;
     try {
       // final DocumentReference docRef =
@@ -343,7 +380,7 @@ class AuthService {
           .document(phoneNumber)
           .collection("myratings")
           .where("ratedByUid", isEqualTo: user.uid)
-          .where("category", isEqualTo: traitCategory);
+          .where("trait", isEqualTo: trait);
       // DocumentSnapshot userDs = await ref.;
       QuerySnapshot qs = await ref.getDocuments();
       if (qs.documents.length > 0) {
@@ -389,8 +426,9 @@ class AuthService {
     }
   }
 
-  void signOut() {
-    _auth.signOut();
+  Future signOut() async {
+    await _auth.signOut();
+    await fbLogin.logOut();
   }
 }
 

@@ -4,7 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:behave/Constants/constants.dart';
+import 'package:behavio/Constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
@@ -85,7 +85,7 @@ class SplashScreenState extends State<AnimatedSplashScreen>
             startDelay: Duration(milliseconds: 1000),
             glowColor: Colors.red,
             endRadius: 150.0,
-            duration: Duration(milliseconds: 3000),
+            duration: Duration(milliseconds: 2000),
             repeat: true,
             showTwoGlows: true,
             repeatPauseDuration: Duration(microseconds: 100),

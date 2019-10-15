@@ -1,4 +1,4 @@
-import 'package:behave/Constants/constants.dart';
+import 'package:behavio/Constants/constants.dart';
 import 'package:fancy_on_boarding/fancy_on_boarding.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

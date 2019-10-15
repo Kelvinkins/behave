@@ -1,5 +1,6 @@
-import 'package:behave/Constants/repository.dart';
-import 'package:behave/firebase/auth.dart';
+import 'package:admob_flutter/admob_flutter.dart';
+import 'package:behavio/Constants/repository.dart';
+import 'package:behavio/firebase/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -29,6 +30,7 @@ class _RatingUIState extends State<RatingUI> {
   List<String> neutralTraits = ["Select..."];
   List<String> filteredTrailts = ["Select..."];
   Repository repo = Repository();
+  AdmobInterstitial interstitialAd;
 
   @override
   void initState() {
@@ -38,12 +40,25 @@ class _RatingUIState extends State<RatingUI> {
     // traitCategory="Positive";
     // filteredTrailts=positiveTraits;
     // _ratingController.text = "3.0";
+    interstitialAd = AdmobInterstitial(
+      adUnitId: "ca-app-pub-2109400871305297/1330853228",
+    );
+    interstitialAd.load();
+
     super.initState();
     authService.loading.listen((state) {
       if (mounted) {
         setState(() => _loading = state);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    interstitialAd.dispose();
+
   }
 
   void messageDialogBox(
@@ -85,9 +100,13 @@ class _RatingUIState extends State<RatingUI> {
                 textAlign: TextAlign.center,
                 style: TextStyle(),
               ),
-              onOkButtonPressed: () {
+              onOkButtonPressed: () async {
                 Navigator.of(context).pop();
+                if (await interstitialAd.isLoaded) {
+                  interstitialAd.show();
+                }
               },
+              onlyOkButton: true,
             ));
   }
 
@@ -294,16 +313,13 @@ class _RatingUIState extends State<RatingUI> {
                           messageDialogBox(context, "Input Error",
                               "You must select your rating", "OK");
                         } else {
-
                           FirebaseUser user =
                               await FirebaseAuth.instance.currentUser();
-                          print("Heelllo "+user.uid);
+                          print("Heelllo " + user.uid);
 
                           bool duplicateResult =
                               await authService.isDuplicateRating(
-                                  _phoneNumberController.text,
-                                  user,
-                                  traitCategory);
+                                  _phoneNumberController.text, user, trait);
                           // print("Heelllo " + duplicateResult.toString()+" "+_phoneNumberController.text;
 
                           bool result = await authService.isSelfRating(
@@ -311,15 +327,15 @@ class _RatingUIState extends State<RatingUI> {
                           if (result) {
                             messageDialogBox(context, "Self rating not allowed",
                                 "Sorry, you cannot rate yourself.", "OK");
-                          }
-                           else if (duplicateResult) {
+                          } else if (duplicateResult) {
+                            print("Duplicate Result: " +
+                                duplicateResult.toString());
                             messageDialogBox(
                                 context,
                                 "Duplicate rating not allowed",
                                 "Sorry, you are not allowed to rate same trait of the same person more than once.",
                                 "OK");
-                          } 
-                          else {
+                          } else {
                             // print(duplicateResult.toString());
                             var uuid = new Uuid();
                             var ratingId = uuid.v4();

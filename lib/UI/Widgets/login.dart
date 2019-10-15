@@ -1,5 +1,5 @@
-import 'package:behave/Constants/constants.dart';
-import 'package:behave/firebase/auth.dart';
+import 'package:behavio/Constants/constants.dart';
+import 'package:behavio/firebase/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -80,13 +80,45 @@ class _LoginState extends State<Login> {
                   // roundedRectButton("Google", signUpGradients, false),
 
                   RaisedButton(
-                    child:
-                        roundedRectButton("Facebook", signInGradients, false),
-                    color: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100)),
-                    onPressed: () {},
-                  )
+                      child:
+                          roundedRectButton("Facebook", signInGradients, false),
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100)),
+                      onPressed: () async {
+                        FirebaseUser user = await authService.fbookLogin();
+
+                        if (user != null) {
+                          print(user.displayName);
+                          authService.analytics
+                              .logLogin(loginMethod: "facebookLogin");
+                          //  Navigator.push(context, new MaterialPageRoute(builder: (context)=>new HomeView(title: "hulia", user: user)));
+                          // Navigator.of(context)
+                          //     .pushReplacementNamed(
+                          //         '/home');
+                          Navigator.of(context).pop();
+
+                          Navigator.of(context).pushReplacementNamed(MAIN_UI);
+                          // .pushReplacementNamed(MAIN_UI);
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Error signing in with facebook"),
+                                  content: Text("Sorry, Something went wrong."),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text("OK"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                      }),
                 ],
               )
       ],
