@@ -42,6 +42,7 @@ class _RatingUIState extends State<RatingUI> {
     // _ratingController.text = "3.0";
     interstitialAd = AdmobInterstitial(
       adUnitId: "ca-app-pub-2109400871305297/1330853228",
+      // adUnitId: "ca-app-pub-3940256099942544/1033173712", //Test
     );
     interstitialAd.load();
 
@@ -58,7 +59,6 @@ class _RatingUIState extends State<RatingUI> {
     // TODO: implement dispose
     super.dispose();
     interstitialAd.dispose();
-
   }
 
   void messageDialogBox(

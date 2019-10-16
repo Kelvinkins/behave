@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:pie_chart/pie_chart.dart';
 
@@ -49,6 +50,7 @@ class _MainUIState extends State<MainUI> {
   int neutralCount = 0;
   String lastRating = "...";
   Color color = Colors.green;
+  bool hasPhoneNumber = false;
 
   bool toggle = false;
   List<Color> colorList = [
@@ -72,12 +74,16 @@ class _MainUIState extends State<MainUI> {
 
 // _ratingController.text = "3.0";
     interstitialAd = AdmobInterstitial(
+      // adUnitId: "ca-app-pub-3940256099942544/1033173712", //Test
+
       adUnitId: "ca-app-pub-2109400871305297/1330853228",
     );
     interstitialAd.load();
 
     FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
       authService.userHasPhoneNumber(user).then((bool value) {
+        hasPhoneNumber = value;
+
         if (!value) {
           phoneNumberRequestDialog(
               context,
@@ -117,6 +123,7 @@ class _MainUIState extends State<MainUI> {
                         decorationStyle: TextDecorationStyle.solid)),
               ),
               new Row(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   new Expanded(
                     child: new Padding(
@@ -152,7 +159,7 @@ class _MainUIState extends State<MainUI> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     new Expanded(
-                      child: DropdownButton<String>(
+                      child: DropdownButtonFormField<String>(
                         value: dropDownValue,
                         onChanged: (String newValue) {
                           setState(() {
@@ -265,6 +272,9 @@ class _MainUIState extends State<MainUI> {
                 // Navigator.of(context).popAndPushNamed(MAIN_UI);
                 Navigator.of(context).pop();
                 Navigator.of(context).pushReplacementNamed(LOGIN_UI);
+                if (await interstitialAd.isLoaded) {
+                  interstitialAd.show();
+                }
               },
             ),
             new FlatButton(
@@ -286,6 +296,7 @@ class _MainUIState extends State<MainUI> {
             title: new Text('Are you sure you want to exit behavio?'),
             content: AdmobBanner(
               adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+              //  adUnitId: "ca-app-pub-3940256099942544/6300978111",
               adUnitId: "ca-app-pub-2109400871305297/8189218691",
             ),
             actions: <Widget>[
@@ -735,7 +746,25 @@ class _MainUIState extends State<MainUI> {
                                               child: Container(
                                                 // decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
                                                 child: ListTile(
-                                                    onTap: () {},
+                                                    onTap: () async {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "Feature coming soon",
+                                                          toastLength:
+                                                              Toast.LENGTH_LONG,
+                                                          gravity: ToastGravity
+                                                              .CENTER,
+                                                          timeInSecForIos: 1,
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                          textColor:
+                                                              Colors.white,
+                                                          fontSize: 16.0);
+                                                      if (await interstitialAd
+                                                          .isLoaded) {
+                                                        interstitialAd.show();
+                                                      }
+                                                    },
                                                     contentPadding:
                                                         EdgeInsets.symmetric(
                                                             horizontal: 20.0,
@@ -871,7 +900,7 @@ class _MainUIState extends State<MainUI> {
                                   child: Column(
                                 children: <Widget>[
                                   Text(
-                                    "You must enter your Phone Number and your gender to for your account to be active.",
+                                    "You must enter your Phone Number and your gender to for your account to be active. Note that your phone number must include the the country code without the plus sign, without spaces. E.g 2348000000000",
                                     style: TextStyle(
                                         fontStyle: FontStyle.italic,
                                         color: Colors.grey),
@@ -889,7 +918,7 @@ class _MainUIState extends State<MainUI> {
                                       phoneNumberRequestDialog(
                                           context,
                                           "Phone number and gender",
-                                          "Please enter your phone number and your gender, this is only done once. Note that your phone number must include the the country code without the plus sign, without spaces. E.g 2348000000000",
+                                          "Please enter your phone number and your gender, this is only done once.",
                                           "OK");
                                     },
                                   )
@@ -992,14 +1021,17 @@ class _MainUIState extends State<MainUI> {
             },
           ),
 
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(RATING_UI);
-            },
-            tooltip: 'rate',
-            backgroundColor: Colors.red,
-            child: Icon(Icons.rate_review),
-          ), // This trailing comma makes auto-formatting nicer for build methods.
+          floatingActionButton: hasPhoneNumber
+              ? FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(RATING_UI);
+                  },
+                  tooltip: 'rate',
+                  backgroundColor: Colors.red,
+                  child: Icon(Icons.rate_review),
+                )
+              : Text(
+                  ""), // This trailing comma makes auto-formatting nicer for build methods.
         )));
   }
 }

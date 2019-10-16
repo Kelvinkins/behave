@@ -28,7 +28,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
     PageModel(
         color: Colors.deepOrange,
         heroAssetPath: 'assets/style1.png',
-        title: Text('Welcome to Behave!',
+        title: Text('Welcome to behavio!',
             style: TextStyle(
               fontWeight: FontWeight.w800,
               color: Colors.white,
