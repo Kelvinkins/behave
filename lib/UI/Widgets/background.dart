@@ -11,13 +11,18 @@ class Background extends StatelessWidget {
           new Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
-              Image.asset('assets/style1.png', width: MediaQuery.of(context).size.width/2.0,),
+              Hero(
+                tag: "start",
+                child: Image.asset(
+                  'assets/icon.png',
+                  width:100,
+                ),
+              ),
               WavyHeader(),
             ],
           ),
           Expanded(
-            child: Container(
-            ),
+            child: Container(),
           ),
           Stack(
             alignment: Alignment.bottomLeft,
@@ -40,7 +45,7 @@ const List<Color> orangeGradients = [
 ];
 
 const List<Color> aquaGradients = [
- Colors.deepOrange,
+  Colors.deepOrange,
   Colors.red,
 ];
 

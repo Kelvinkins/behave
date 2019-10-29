@@ -26,7 +26,7 @@ class Repository {
     {"Name": "Alert"},
     {"Name": "Allocentric"},
     {"Name": "Amiable"},
-    {"Name": "nticipative"},
+    {"Name": "Anticipative"},
     {"Name": "Appreciative"},
     {"Name": "Articulate"},
     {"Name": "Aspiring"},

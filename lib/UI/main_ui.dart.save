@@ -491,7 +491,13 @@ class _MainUIState extends State<MainUI> {
                                                                       elevation:
                                                                           8.0,
                                                                       shape:
-                                                                          CircleBorder(),
+                                                                          
+
+
+
+
+
+CircleBorder(),
                                                                       child:
                                                                           CircleAvatar(
                                                                         backgroundColor:

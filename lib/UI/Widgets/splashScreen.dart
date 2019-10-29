@@ -81,24 +81,26 @@ class SplashScreenState extends State<AnimatedSplashScreen>
             ],
           ),
 
-          AvatarGlow(
-            startDelay: Duration(milliseconds: 1000),
-            glowColor: Colors.red,
-            endRadius: 150.0,
-            duration: Duration(milliseconds: 2000),
-            repeat: true,
-            showTwoGlows: true,
-            repeatPauseDuration: Duration(microseconds: 100),
-            child: Material(
-              elevation: 8.0,
-              shape: CircleBorder(),
-              child: new Image.asset(
-                'assets/logo.png',
-                width: animation.value * 150,
-                height: animation.value * 150,
-              ),
-            ),
-          ),
+          Hero(
+              tag: "start",
+              child: AvatarGlow(
+                startDelay: Duration(milliseconds: 1000),
+                glowColor: Colors.red,
+                endRadius: 150.0,
+                duration: Duration(milliseconds: 2000),
+                repeat: true,
+                showTwoGlows: true,
+                repeatPauseDuration: Duration(microseconds: 100),
+                child: Material(
+                  elevation: 8.0,
+                  shape: CircleBorder(),
+                  child: new Image.asset(
+                    'assets/logo.png',
+                    width: animation.value * 150,
+                    height: animation.value * 150,
+                  ),
+                ),
+              )),
 
           // new Column(
           //     mainAxisAlignment: MainAxisAlignment.center,

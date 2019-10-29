@@ -11,6 +11,9 @@ import 'package:uuid/uuid.dart';
 class RatingUI extends StatefulWidget {
   @override
   _RatingUIState createState() => _RatingUIState();
+  RatingUI({this.isLink, this.phoneNumber});
+  final bool isLink;
+  final String phoneNumber;
 }
 
 class _RatingUIState extends State<RatingUI> {
@@ -37,6 +40,8 @@ class _RatingUIState extends State<RatingUI> {
     positiveTraits = List.from(positiveTraits)..addAll(repo.getPositive());
     negativeTraits = List.from(negativeTraits)..addAll(repo.getNegative());
     neutralTraits = List.from(neutralTraits)..addAll(repo.getNeutral());
+    _phoneNumberController.text = widget.phoneNumber;
+    print(_phoneNumberController.text);
     // traitCategory="Positive";
     // filteredTrailts=positiveTraits;
     // _ratingController.text = "3.0";
@@ -92,11 +97,11 @@ class _RatingUIState extends State<RatingUI> {
         builder: (_) => AssetGiffyDialog(
               image: Image.asset('assets/style1.png'),
               title: Text(
-                'Rating submitted successfully',
+                'Submitted successfully',
                 style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
               ),
               description: Text(
-                'Your  rating has been submitted successfully, thank you for doing this.',
+                'Your rating has been submitted successfully, thanks for doing this.',
                 textAlign: TextAlign.center,
                 style: TextStyle(),
               ),
@@ -115,7 +120,15 @@ class _RatingUIState extends State<RatingUI> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('New Rating'),
+        title: Row(
+          children: <Widget>[
+            Hero(
+              tag: "rateUi",
+              child: Icon(Icons.rate_review),
+            ),
+            Text(' New Rating'),
+          ],
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
@@ -143,36 +156,41 @@ class _RatingUIState extends State<RatingUI> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     SizedBox(
-                      height: 40.0,
+                      height: 10.0,
                     ),
-                    _heading('New Rating'),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: TextFormField(
-                        controller: _phoneNumberController,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: "Enter Phone Number",
-                          labelText: "Enter Phone Number",
-                          suffixIcon: MaterialButton(
-                            onPressed: () async {
-                              NativeContactPicker _contactPicker =
-                                  new NativeContactPicker();
-                              Contact contact =
-                                  await _contactPicker.selectContact();
-                              setState(() {
-                                // _userRating =
-                                //     double.parse(_ratingController.text ?? "0.0");
-                                _phoneNumberController.text =
-                                    contact.phoneNumber;
-                              });
-                            },
-                            child: Text("pick from contact"),
+                    // _heading('New Rating'),
+                    widget.isLink
+                        ? Text(
+                            "Phone Number not visible",
+                            style: TextStyle(color: Colors.grey),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: TextFormField(
+                              controller: _phoneNumberController,
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: "Enter Phone Number",
+                                labelText: "Enter Phone Number",
+                                suffixIcon: MaterialButton(
+                                  onPressed: () async {
+                                    NativeContactPicker _contactPicker =
+                                        new NativeContactPicker();
+                                    Contact contact =
+                                        await _contactPicker.selectContact();
+                                    setState(() {
+                                      // _userRating =
+                                      //     double.parse(_ratingController.text ?? "0.0");
+                                      _phoneNumberController.text =
+                                          contact.phoneNumber;
+                                    });
+                                  },
+                                  child: Text("pick from contact"),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                     SizedBox(
                       height: 20.0,
                     ),
@@ -204,7 +222,7 @@ class _RatingUIState extends State<RatingUI> {
                             }
                           });
                         },
-                        items: <String>['Positive', 'Negative', 'Neutral']
+                        items: <String>['Positive', 'Neutral', 'Negative']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -291,7 +309,7 @@ class _RatingUIState extends State<RatingUI> {
                       color: Colors.red,
                       height: 50,
                       onPressed: () async {
-                        print("Heelllo ");
+                        print(_phoneNumberController.text);
 
                         if (_phoneNumberController.text == "" ||
                             _phoneNumberController.text == null ||
@@ -349,7 +367,7 @@ class _RatingUIState extends State<RatingUI> {
                                 traitCategory);
                             _phoneNumberController.text = "";
                             _commentController.text = "";
-                            _rating = 3;
+                            _rating = 1;
                             trait = "Select...";
                             // traitCategory = "";
                             welcomeMessage(context);

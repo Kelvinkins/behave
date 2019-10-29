@@ -4,9 +4,9 @@ import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -131,6 +131,55 @@ class AuthService {
     });
   }
 
+  Future<String> shareLink(FirebaseUser user) async {
+    String message;
+    // int balance = 0;
+    String phoneNumber;
+    String dynamicLink;
+
+    loading.add(true);
+    try {
+      // final DocumentReference postRef =
+      var docRef = Firestore.instance.document('users/' + user.uid);
+      DocumentSnapshot postSnapshot = await docRef.get();
+      if (postSnapshot.exists) {
+        phoneNumber = postSnapshot.data["phoneNumber"].toString();
+        dynamicLink = postSnapshot.data["dynamicLink"];
+      }
+      if (phoneNumber == null) {
+        message = null;
+      } else {
+        if (dynamicLink == null) {
+          final DynamicLinkParameters parameters = DynamicLinkParameters(
+            uriPrefix: 'https://behave.page.link',
+            link: Uri.parse("http://www.hulia.com.ng/phone?" + phoneNumber),
+            androidParameters: AndroidParameters(
+              packageName: 'com.hulia.behave',
+              // minimumVersion: 125,
+            ),
+          );
+          ShortDynamicLink dynamicUrl = await parameters.buildShortLink();
+          message = dynamicUrl.shortUrl.toString();
+          Firestore.instance
+              .document('users/' + user.uid)
+              .updateData({'dynamicLink': message});
+          print(message);
+          // message = " Successful\n, Reason: " + reasonForCode+"\n Code: " + code ;
+        } else {
+          message = postSnapshot.data["dynamicLink"].toString();
+        }
+      }
+
+      loading.add(false);
+    } on PlatformException catch (error) {
+      loading.add(false);
+
+      message = null;
+    }
+
+    return message;
+  }
+
   Future<FirebaseUser> googleSignIn() async {
     // Start
     loading.add(true);
@@ -172,13 +221,12 @@ class AuthService {
     try {
       final FacebookLoginResult facebookLoginResult =
           await fbLogin.logIn(['email', 'public_profile']);
-          print(facebookLoginResult.errorMessage);
+      print(facebookLoginResult.errorMessage);
       if (facebookLoginResult.status == FacebookLoginStatus.loggedIn) {
         FacebookAccessToken facebookAccessToken =
             facebookLoginResult.accessToken;
         final AuthCredential credential = FacebookAuthProvider.getCredential(
             accessToken: facebookAccessToken.token);
-        print("Access Token:"+facebookAccessToken.token);
 
         authResult = await _auth.signInWithCredential(credential);
         if (authResult.additionalUserInfo.isNewUser) {
@@ -195,7 +243,6 @@ class AuthService {
       print(e);
 
       return authResult.user;
-
     }
     return authResult.user;
   }

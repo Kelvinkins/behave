@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ONBOARDING_UI: (BuildContext context) => OnboardingUI(),
         SPLASH_SCREEN: (BuildContext context) => AnimatedSplashScreen(),
         LOGIN_UI: (BuildContext context) => LoginUI(),
-        RATING_UI: (BuildContext context) => RatingUI(),
+        RATING_UI: (BuildContext context) => RatingUI(isLink: false,),
       },
       initialRoute: SPLASH_SCREEN,
     );

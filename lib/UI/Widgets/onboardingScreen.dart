@@ -69,7 +69,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
             fontSize: 34.0,
           )),
       body: Text(
-          'Then, help other people become better too by rating them. Now hit the Get started button. Ohh Yeah!',
+          'Then, help other people become better too by rating them. Now hit the Get started button.',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -92,6 +92,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
       body: FancyOnBoarding(
           doneButtonText: "Get Started",
           skipButtonText: "Skip",
+          
           pageList: pageList,
           onDoneButtonPressed: () =>
               Navigator.of(context).pushReplacementNamed(LOGIN_UI),
