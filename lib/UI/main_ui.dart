@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:behavio/Constants/constants.dart';
+import 'package:behavio/UI/rating_list_ui.dart';
 import 'package:behavio/UI/rating_ui.dart';
 import 'package:behavio/firebase/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -345,11 +346,27 @@ class _MainUIState extends State<MainUI> {
             ),
             actions: <Widget>[
               new FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
+                onPressed: () async {
+                   Navigator.of(context).pop(false);
+                     if (await interstitialAd.isLoaded) {
+                    interstitialAd.show();
+                  }
+                   },
                 child: new Text('No'),
+                
               ),
               new FlatButton(
-                onPressed: () => SystemNavigator.pop(),
+                onPressed: () async {
+                  // AdmobBanner(
+                  //   adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+                  //   adUnitId: "ca-app-pub-3940256099942544/6300978111",
+                  //   // adUnitId: "ca-app-pub-2109400871305297/8189218691",
+                  // );
+                  if (await interstitialAd.isLoaded) {
+                    interstitialAd.show();
+                  }
+                  SystemNavigator.pop();
+                },
                 child: new Text('Yes'),
               ),
             ],
@@ -370,6 +387,7 @@ class _MainUIState extends State<MainUI> {
     return (new WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
+          
             // appBar: AppBar(
             //   title: Text("Behave"),
             //   elevation: 0,
@@ -441,7 +459,7 @@ class _MainUIState extends State<MainUI> {
                                         return ListView(
                                           children: <Widget>[
                                             Card(
-                                                elevation: 8.0,
+                                                elevation: 2.0,
                                                 margin:
                                                     new EdgeInsets.symmetric(
                                                         horizontal: 10.0,
@@ -898,7 +916,7 @@ class _MainUIState extends State<MainUI> {
                                                 }), // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
                                             Card(
-                                                elevation: 8.0,
+                                                elevation: 2.0,
                                                 margin:
                                                     new EdgeInsets.symmetric(
                                                         horizontal: 10.0,
@@ -907,24 +925,20 @@ class _MainUIState extends State<MainUI> {
                                                   // decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
                                                   child: ListTile(
                                                       onTap: () async {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "Feature coming soon",
-                                                            toastLength: Toast
-                                                                .LENGTH_LONG,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .CENTER,
-                                                            timeInSecForIos: 1,
-                                                            backgroundColor:
-                                                                Colors.red,
-                                                            textColor:
-                                                                Colors.white,
-                                                            fontSize: 16.0);
-                                                        if (await interstitialAd
-                                                            .isLoaded) {
-                                                          interstitialAd.show();
-                                                        }
+                                                        Navigator.push(
+                                                            context,
+                                                            new MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        new RatingList(
+                                                                          phoneNumber: userSnapshot
+                                                                              .data['phoneNumber']
+                                                                              .toString(),
+                                                                        )));
+                                                        // if (await interstitialAd
+                                                        //     .isLoaded) {
+                                                        //   interstitialAd.show();
+                                                        // }
                                                       },
                                                       contentPadding:
                                                           EdgeInsets.symmetric(
@@ -1188,11 +1202,11 @@ class _MainUIState extends State<MainUI> {
                       // ),
                       background: SvgPicture.asset('assets/style3.svg'),
                     ),
-                  )
+                  ),
                 ];
               },
             ),
-            floatingActionButton: FloatingActionButton(
+            floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
                 if (!hasPhoneNumber) {
                   messageDialogBox(
@@ -1206,8 +1220,10 @@ class _MainUIState extends State<MainUI> {
               },
               tooltip: 'rate',
               heroTag: "rateUi",
-              backgroundColor: Colors.red,
-              child: Icon(Icons.rate_review),
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.red,
+              icon: Icon(Icons.rate_review),
+              label: Text("Rate"),
             )
             // This trailing comma makes auto-formatting nicer for build methods.
             )));

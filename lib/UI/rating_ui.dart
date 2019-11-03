@@ -296,8 +296,14 @@ class _RatingUIState extends State<RatingUI> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 40.0,
+                    
+                     AdmobBanner(
+              adSize: AdmobBannerSize.BANNER,
+              //  adUnitId: "ca-app-pub-3940256099942544/6300978111",
+              adUnitId: "ca-app-pub-2109400871305297/8189218691",
+            ),
+            SizedBox(
+                      height: 20.0,
                     ),
                     MaterialButton(
                       child: Text(
@@ -408,7 +414,7 @@ class _RatingUIState extends State<RatingUI> {
     switch (mode) {
       case 1:
         return RatingBar(
-          initialRating: 1.0,
+          initialRating: _rating,
           direction: _isVertical ? Axis.vertical : Axis.horizontal,
           allowHalfRating: true,
           unratedColor: Colors.grey[200],
